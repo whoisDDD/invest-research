@@ -97,7 +97,7 @@ class ReportRegressionTests(unittest.TestCase):
                 writer=csv.DictWriter(stream,fieldnames=rows[0].keys());writer.writeheader();writer.writerows(rows)
             out=Path(folder)/'out'
             run(path,date(2026,11,5),out)
-            html=(out/'report.html').read_text(encoding='utf-8')
+            html=(out/'static_report.html').read_text(encoding='utf-8')
             self.assertIn('输入标记已对照原文 1/20 条',html)
             self.assertIn('亿元人民币',html)
             self.assertIn('归母净利率',html)
