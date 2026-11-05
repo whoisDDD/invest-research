@@ -1,0 +1,15 @@
+{
+  "as_of": "2026-11-05",
+  "entities": [
+    {
+      "entity_id": "SYNTHETIC",
+      "market": "DEMO",
+      "name": "合成测试实体",
+      "profile": "general_nonfinancial",
+      "currency": "CNY"
+    }
+  ],
+  "indices": [],
+  "notes": "实际观察名单放config/local/；证券代码须通过所用供应商查询确认。"
+}
+

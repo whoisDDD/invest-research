@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-11-05",
+  "providers": [
+    {
+      "id": "westock",
+      "official_page": "https://skillhub.cn/skills/tencent-adm/westock-data",
+      "interface": "official_skill_and_cli",
+      "status": "official_publisher_and_docs_verified_live_access_not_tested",
+      "command": "westock",
+      "endpoint": null,
+      "notes": "当前官方Skill公开依赖westock CLI；旧westock-mcp连接器与通用远程端点须在宿主另行核实。"
+    },
+    {
+      "id": "ifind",
+      "official_page": "https://mcp.51ifind.com/",
+      "interface": "official_mcp_and_skill",
+      "status": "official_docs_verified_live_access_not_tested",
+      "endpoint": null,
+      "notes": "从本人官方账号获取当前连接配置；不要把第三方文章地址硬编码为已验证端点。"
+    },
+    {
+      "id": "sec",
+      "official_page": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "interface": "official_api",
+      "status": "documented_not_integrated",
+      "notes": "财报与申报；行情另接数据商。"
+    },
+    {
+      "id": "csv",
+      "interface": "local_file",
+      "status": "implemented",
+      "schema": "docs/metrics.md"
+    }
+  ]
+}
+
