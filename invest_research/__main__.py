@@ -1,17 +1,17 @@
 import argparse
 from datetime import date
 from pathlib import Path
-import importlib.util
 import json
-import shutil
 from .core import DataError
 from .pipeline import run
+from .doctor import inventory
 
 
 def main():
     parser = argparse.ArgumentParser(description="Source-backed investment research")
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("doctor", help="Local capability inventory; no account/network verification")
+    doctor = commands.add_parser("doctor", help="Read-only discovery; no account/network verification")
+    doctor.add_argument("--skill-dir", action="append", default=[], help="Additional installed skill directory or SKILL.md")
     demo = commands.add_parser("demo")
     demo.add_argument("--out", default="runs/demo")
     analyze = commands.add_parser("analyze")
@@ -20,10 +20,7 @@ def main():
     analyze.add_argument("--out", required=True)
     args = parser.parse_args()
     if args.command == "doctor":
-        print(json.dumps({"python_required":"3.10+", "westock_cli_installed":bool(shutil.which("westock")),
-                          "mcp_sdk_installed":importlib.util.find_spec("mcp") is not None,
-                          "supplier_access":"not_tested", "network":"not_tested",
-                          "note":"Use official vendor/client authorization and a real query before marking connected."},indent=2))
+        print(json.dumps(inventory(args.skill_dir),ensure_ascii=False,indent=2))
         return
     try:
         if args.command == "demo":

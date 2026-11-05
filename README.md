@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-v0.1.0：完整研究框架、跨Agent操作说明、数据契约、财务计算核心、离线合成样例与研究包导出已提供。厂商账号授权、真实行情/财报取数和客户端联调仍需在使用者环境验收。没有把仅列出的数据商当作已经连接的服务。
+v0.2.0：提供完整研究框架、跨Agent操作说明、数据契约、财务计算核心、离线合成样例与研究包。累计、单季、TTM及各自同比进入报告；来源、核验记录和缺失原因逐项展示。厂商授权、真实取数覆盖和客户端联调仍需在使用者环境验收，没有把仅列出的数据商当作已经连接的服务。
 
 ## 开始
 
@@ -22,9 +22,15 @@ v0.1.0：完整研究框架、跨Agent操作说明、数据契约、财务计算
 
 打开 runs/demo/report.html；将 runs/demo/review_pack.zip 上传给 ChatGPT。全部示例数字都是人为构造的测试数据，实体名 SYNTHETIC，不代表任何真实证券。
 
+报告金额以亿元等可读单位、比率以百分比显示；完整精度保存在metrics.json。每个输入期间输出26项指标，缺失或特殊基数会保留状态。图表横轴使用真实日期间隔，纵轴从零开始，缺失季度断线。
+
 有来源明确的标准化数据后运行：
 
     python -m invest_research analyze --input path/to/facts.csv --as-of 2026-11-05 --out runs/my-review
+
+核验记录可通过CSV可选列逐条提供，见docs/metrics.md；未提供时显示未核对，不根据“成功取数”自动变成已核实。
+
+doctor只做本机工具发现，不测试授权。额外技能路径可用 `python -m invest_research doctor --skill-dir /path/to/westock-data` 指定；缺少CLI或Python MCP SDK不代表宿主没有可用MCP。
 
 ## 给本地Agent的第一句话
 
