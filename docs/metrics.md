@@ -44,7 +44,7 @@ v0.2.0的metrics.json对每个对象、币种、输入报告期输出26项：4�
 
 每项保留metric、value、unit、source_ids，并增加currency、status、missing_periods和fact_refs。fact_refs关联sources.csv的逐条记录，避免同一份报告内只有部分字段被核对时误标整份报告。value保持完整精度；HTML只做显示舍入。
 
-旧的六项TTM指标名继续保留，但指标数量增加、sources.csv扩展为逐条事实记录；消费者应按metric与键名读取，不能依赖固定行数或列序号。manifest标记schema_version与calculation_version为0.2.0。
+旧的六项TTM指标名继续保留，但指标数量增加、sources.csv扩展为逐条事实记录；消费者应按metric与键名读取，不能依赖固定行数或列序号。manifest的schema_version为0.2.0，calculation_version记录当前程序版本（包括显示层修订），两者无需相等。
 
 ## 后续实现须遵循
 

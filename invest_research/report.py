@@ -59,6 +59,24 @@ def next_quarter(end):
     return date(end.year+1,3,31) if end.month == 12 else date(end.year, {3:6,6:9,9:12}[end.month], {3:30,6:30,9:31}[end.month])
 
 
+def date_ticks(start, end, minimum_days=1):
+    """Keep endpoints and evenly spaced calendar-quarter labels, capped for readability."""
+    if start == end:
+        return [start]
+    candidates=[]
+    d=next_quarter(start)
+    while d < end:
+        candidates.append(d)
+        d=next_quarter(d)
+    # About four interior labels across a 610px plot, even for long histories.
+    gap=max(minimum_days,(end-start).days/5)
+    ticks=[start]
+    for d in candidates:
+        if (d-ticks[-1]).days >= gap and (end-d).days >= gap:
+            ticks.append(d)
+    return ticks+[end]
+
+
 def chart_svg(items, currency):
     """True date spacing, zero baseline, and no line across an absent quarter."""
     esc = html.escape
@@ -98,10 +116,10 @@ def chart_svg(items, currency):
     for segment in segments:
         if len(segment)>1:
             parts.append(f'<polyline points="{" ".join(segment)}" fill="none" stroke="#2563eb" stroke-width="2.5"/>')
-    labels = sorted({start,end})
+    labels = date_ticks(start,end)
     for d in labels:
         x = 90+(d-start).days*610/span
-        parts.append(f'<text x="{x:.2f}" y="242" text-anchor="middle">{d}</text>')
+        parts.append(f'<line x1="{x:.2f}" y1="210" x2="{x:.2f}" y2="216" stroke="#64748b"/><text class="date-tick" x="{x:.2f}" y="242" text-anchor="middle">{d}</text>')
     parts.append('</svg><p>横轴按实际日期间隔；纵轴从零开始；缺失季度断线。悬停数据点查看日期和数值。</p>')
     return ''.join(parts)
 
@@ -117,7 +135,7 @@ def make_report(metrics, as_of, demo, facts=(), quality=None):
         verification_text = '所有示例数字为合成数据，不代表真实证券。'
 
     def links(refs):
-        return '、'.join(f'<a href="#{source_anchor(ref)}">{esc(by_ref[ref].source_id)} · {esc(by_ref[ref].metric)}</a>'
+        return ''.join(f'<span class="evidence-link"><a href="#{source_anchor(ref)}" title="{esc(by_ref[ref].source_id,quote=True)}">{by_ref[ref].period_end} · {esc(FLOW_NAMES.get(by_ref[ref].metric,by_ref[ref].metric))}</a></span>'
                         for ref in dict.fromkeys(refs) if ref in by_ref) or '无可用来源'
 
     def rows(items):
@@ -130,12 +148,14 @@ def make_report(metrics, as_of, demo, facts=(), quality=None):
             status=STATUSES.get(item.get('status','available'),item.get('status','available'))
             if item.get('missing_periods'):
                 status+='：'+', '.join(item['missing_periods'])
-            result.append('<tr>'+''.join('<td>'+esc(str(x))+'</td>' for x in (
-                item['entity_id'],item['period_end'],metric_label(item['metric']),value,unit,status,verification))+
+            cells=(item['entity_id'],item['period_end'],metric_label(item['metric']),value,unit,status,verification)
+            result.append('<tr>'+''.join('<td class="'+cls+'">'+esc(str(x))+'</td>' for cls,x in zip(
+                ('identifier','date','metric','number','unit','status','verification'),cells))+
                 '<td>'+links(item.get('fact_refs',[]))+'</td></tr>')
         return ''.join(result)
 
     headers='<tr>'+''.join('<th>'+x+'</th>' for x in ('对象','报告期','指标','数值','单位','状态','核验记录','来源'))+'</tr>'
+    columns='<colgroup>'+''.join(f'<col style="width:{width}px">' for width in (95,110,190,110,115,190,155,280))+'</colgroup>'
     latest={}
     for item in metrics:
         currency=item['currency']
@@ -149,9 +169,9 @@ def make_report(metrics, as_of, demo, facts=(), quality=None):
     charts=[]
     for entity,currency in sorted({(x['entity_id'],x['unit']) for x in metrics if x['metric']=='revenue_ttm'}):
         items=[x for x in metrics if (x['entity_id'],x['unit'],x['metric'])==(entity,currency,'revenue_ttm')]
-        refs=[r for x in items for r in x.get('fact_refs',[])]
+        refs=list(dict.fromkeys(r for x in items if x['value'] is not None for r in x.get('fact_refs',[]) if r in by_ref))
         charts.append(f'<h2>{esc(entity)} · TTM营收 · {esc(currency)}</h2>'+chart_svg(items,currency)+
-                      f'<p>截至 {as_of}；来源：{links(refs)}</p>')
+                      f'<p>截至 {as_of}</p><details class="chart-sources"><summary>图表来源（{len(refs)}条证据，仅包含入图数值的计算依据）</summary>{links(refs)}</details>')
     sources=[]
     for f in sorted(facts,key=lambda f:f.ref):
         state='输入标记已对照原文' if f.verification=='checked_against_disclosure' else '未核对'
@@ -163,11 +183,11 @@ def make_report(metrics, as_of, demo, facts=(), quality=None):
     counts=Counter(STATUSES.get(i['status'],i['status']) for i in q.get('issues',[]))
     missing='；'.join(f'{name} {count}项' for name,count in sorted(counts.items())) or '无缺失或特殊基数'
     return f'''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>{title}</title><style>body{{font:16px/1.65 system-ui;max-width:1250px;margin:32px auto;padding:0 18px;color:#17212f}}table{{border-collapse:collapse;width:100%;font-size:14px}}td,th{{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}}svg{{max-width:760px;width:100%;background:#f5f7fc}}svg text{{font:13px system-ui;fill:#475569}}.badge{{background:#fff1c9;padding:12px}}.scroll{{overflow-x:auto}}summary{{cursor:pointer;font-weight:bold}}a{{color:#1d4ed8}}</style>
+<title>{title}</title><style>body{{font:16px/1.65 system-ui;max-width:1250px;margin:32px auto;padding:0 18px;color:#17212f}}table{{border-collapse:collapse;width:100%;font-size:14px}}td,th{{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}}.metrics-table{{table-layout:fixed;min-width:1245px}}.metrics-table th,.identifier,.date,.number,.unit,.verification{{white-space:nowrap}}.number{{font-variant-numeric:tabular-nums}}.status,.evidence-link{{overflow-wrap:anywhere}}.evidence-link{{display:block;margin:2px 0}}.chart-sources{{margin-bottom:24px}}svg{{max-width:760px;width:100%;background:#f5f7fc}}svg text{{font:13px system-ui;fill:#475569}}.badge{{background:#fff1c9;padding:12px}}.scroll{{overflow-x:auto}}summary{{cursor:pointer;font-weight:bold}}a{{color:#1d4ed8}}</style>
 <h1>{title}</h1><p class="badge">截至 {as_of}；{verification_text}</p>
 <p>所选输入 {len(facts)}条；计算质量：{'存在缺口' if q.get('status')=='partial' else '见质检记录'}。{esc(missing)}</p>
 <p>报告为固定程序计算结果；完整数值保存在 metrics.json，显示数值统一四舍五入至两位。缺失不填零。</p>
-{''.join(charts)}<h2>最新报告期指标</h2><div class="scroll"><table><thead>{headers}</thead><tbody>{rows(latest_rows)}</tbody></table></div>
-<details><summary>全部历史指标（{len(metrics)}项）</summary><div class="scroll"><table><thead>{headers}</thead><tbody>{rows(metrics)}</tbody></table></div></details>
+{''.join(charts)}<h2>最新报告期指标</h2><div class="scroll"><table class="metrics-table">{columns}<thead>{headers}</thead><tbody>{rows(latest_rows)}</tbody></table></div>
+<details><summary>全部历史指标（{len(metrics)}项）</summary><div class="scroll"><table class="metrics-table">{columns}<thead>{headers}</thead><tbody>{rows(metrics)}</tbody></table></div></details>
 <details open><summary>来源与逐条核验记录（{len(facts)}条）</summary><div class="scroll"><table><thead><tr><th>来源ID</th><th>对象</th><th>报告期</th><th>输入字段</th><th>披露日期</th><th>日期依据</th><th>来源类别</th><th>核验状态</th><th>原文位置</th><th>单位依据</th><th>链接</th></tr></thead><tbody>{''.join(sources)}</tbody></table></div></details>
 <p>sources.csv 包含同样的逐条记录，指标口径见 definitions.md。日期按输入口径使用，不自动增减一天。</p></html>'''

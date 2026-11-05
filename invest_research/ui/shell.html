@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark"><title>财报研究台 · 交互看板</title>
+<style>__STYLES__</style>
+</head>
+<body>
+<a class="skip" href="#workspace">跳转到看板</a>
+<aside class="sidebar">
+ <a class="brand" href="#overview" aria-label="财报研究台首页"><span class="brand-mark">研</span><span>财报研究台<small>INVEST RESEARCH</small></span></a>
+ <div class="nav-caption">研究视图</div>
+ <nav id="navigation" aria-label="研究视图">
+  <button type="button" data-view="overview" class="nav-item active" aria-current="page"><span aria-hidden="true">◈</span>财务总览</button>
+  <button type="button" data-view="trends" class="nav-item"><span aria-hidden="true">↗</span>增长与趋势</button>
+  <button type="button" data-view="cash" class="nav-item"><span aria-hidden="true">▥</span>现金与盈利</button>
+  <button type="button" data-view="metrics" class="nav-item"><span aria-hidden="true">▦</span>指标明细</button>
+  <button type="button" data-view="sources" class="nav-item"><span aria-hidden="true">◎</span>证据与缺口</button>
+ </nav>
+ <div class="sidebar-foot"><span class="live-dot"></span>离线研究快照<p id="snapshot-date"></p><a href="static_report.html">打开静态报告 ↗</a></div>
+</aside>
+<div class="app">
+ <header class="topbar"><div class="breadcrumb">研究工作台 <span>/</span> <b id="breadcrumb-current">财务总览</b></div><div class="topbar-actions"><span id="data-badge" class="tag"></span><button id="theme-toggle" class="icon-button" aria-label="切换深浅主题" title="切换深浅主题">◐</button><button id="export-button" class="button secondary">导出当前指标 ↓</button></div></header>
+ <main id="workspace" tabindex="-1">
+  <div class="page-heading"><div><p class="eyebrow">FINANCIAL EXPLORER</p><h1 id="page-title">让财报变化，一眼可见。</h1><p class="subtitle" id="page-subtitle">从增长、盈利和现金流出发，回到每一个数字的依据。</p></div><div class="period-stamp"><span>截至日期</span><strong id="asof-label"></strong></div></div>
+  <div id="data-notice" class="notice" role="note"></div>
+  <section class="filterbar" aria-label="筛选条件">
+   <label>研究对象<select id="entity-select" aria-label="研究对象"></select></label>
+   <label>报告期<select id="period-select" aria-label="报告期"></select></label>
+   <div class="filter-mode"><span class="field-label">财务口径</span><div class="segmented" id="mode-control" role="group" aria-label="财务口径"><button data-mode="ttm" aria-pressed="true">TTM</button><button data-mode="quarter" aria-pressed="false">单季</button><button data-mode="ytd" aria-pressed="false">累计</button></div></div>
+   <label>趋势范围<select id="range-select" aria-label="趋势范围"><option value="8">最近 8 期</option><option value="4">最近 4 期</option><option value="all">全部期间</option></select></label>
+   <div class="context-chip"><span class="live-dot"></span><span id="context-label"></span></div>
+  </section>
+  <section id="kpi-grid" class="kpi-grid" aria-label="核心财务指标"></section>
+  <section id="observation-strip" class="observation-strip" aria-label="本期观察"></section>
+  <div class="chart-grid">
+   <section id="trend-panel" class="panel wide" data-views="overview trends"><div class="panel-heading"><div><p class="section-kicker">规模与利润</p><h2>收入与利润走势</h2></div><button class="text-button" data-inspect="revenue">查看依据 ↗</button></div><div class="panel-meta" id="trend-caption"></div><div id="trend-legend" class="legend" role="group" aria-label="趋势图曲线"></div><div id="trend-chart" class="chart-host"></div><div id="trend-footer" class="chart-footer"></div></section>
+   <section id="growth-panel" class="panel" data-views="overview trends"><div class="panel-heading"><div><p class="section-kicker">同口径比较</p><h2>增长节奏</h2></div><span class="unit-pill">同比 %</span></div><div class="panel-meta" id="growth-caption"></div><div id="growth-legend" class="legend" role="group" aria-label="同比图系列"></div><div id="growth-chart" class="chart-host"></div><div id="growth-footer" class="chart-footer"></div></section>
+   <section id="cash-panel" class="panel wide" data-views="overview cash"><div class="panel-heading"><div><p class="section-kicker">现金与投入</p><h2>利润能否转化为现金</h2></div><button class="text-button" data-inspect="operating_cashflow">查看依据 ↗</button></div><div class="panel-meta" id="cash-caption"></div><div id="cash-legend" class="legend" role="group" aria-label="现金图系列"></div><div id="cash-chart" class="chart-host"></div><div id="cash-footer" class="chart-footer"></div></section>
+   <section id="margin-panel" class="panel" data-views="overview cash"><div class="panel-heading"><div><p class="section-kicker">盈利能力</p><h2>归母净利率</h2></div><span class="unit-pill">TTM · %</span></div><div class="panel-meta">归母 TTM 净利润 / TTM 营业收入</div><div id="margin-chart" class="chart-host"></div><div id="margin-footer" class="chart-footer"></div></section>
+  </div>
+  <section class="panel detail-panel" id="metrics-panel" data-views="metrics"><div class="panel-heading"><div><p class="section-kicker">按需展开</p><h2>指标明细</h2></div><label class="search-label"><span class="sr-only">搜索指标</span><input id="metric-search" type="search" placeholder="搜索指标，例如：营收、现金流"></label></div><p class="panel-meta">当前公司与趋势范围内的指标；点击列标题排序，点击数值查看来源。</p><div class="table-scroll"><table class="metric-table"><thead><tr><th><button data-sort="period_end">报告期 ↕</button></th><th><button data-sort="metric">指标 ↕</button></th><th class="numeric"><button data-sort="value">数值 ↕</button></th><th>单位</th><th>状态</th><th>核验记录</th></tr></thead><tbody id="metric-body"></tbody></table></div><div id="table-count" class="chart-footer"></div></section>
+  <section id="sources-panel" data-views="sources" class="evidence-layout"><div class="panel"><div class="panel-heading"><div><p class="section-kicker">证据覆盖</p><h2>来源与核验</h2></div><span id="evidence-count" class="unit-pill"></span></div><p class="panel-meta">“已对照”仅代表输入提供的原文核验记录。计算通过不会自动升级数据真实性。</p><div id="evidence-summary" class="evidence-summary"></div><div id="source-list" class="source-list"></div></div><div class="panel"><div class="panel-heading"><div><p class="section-kicker">影响可用性的因素</p><h2>本期数据缺口</h2></div></div><div id="quality-list" class="quality-list"></div></div></section>
+  <footer class="page-footer"><span>财报研究台 · <span id="footer-version"></span></span><span>图形用于观察变化，完整精度与逐条证据保留在研究包中。</span><a href="static_report.html">完整静态报告 ↗</a></footer>
+ </main>
+</div>
+<div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
+<div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+<aside id="inspector" class="inspector" role="dialog" aria-modal="true" aria-labelledby="inspector-title" hidden><div class="inspector-top"><span class="eyebrow">EVIDENCE INSPECTOR</span><button id="close-inspector" class="icon-button" aria-label="关闭来源面板">×</button></div><h2 id="inspector-title">指标依据</h2><div id="inspector-content"></div></aside>
+<noscript><div class="noscript">交互看板需要启用 JavaScript。<a href="static_report.html">打开完整静态报告</a></div></noscript>
+<script type="application/json" id="research-data">__PAYLOAD__</script>
+<script>__SCRIPT__</script>
+</body></html>

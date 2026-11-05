@@ -7,6 +7,7 @@ from pathlib import Path
 import zipfile
 from .core import load_facts, calculate, as_of_facts
 from .report import make_report, verification_summary
+from .dashboard import make_dashboard
 from . import __version__
 
 
@@ -32,13 +33,14 @@ def run(input_path, as_of, out, demo=False):
                              f.metric,f.verification,f.evidence_locator,f.unit_basis,f.publication_basis,f.source_quality])
     root = Path(__file__).resolve().parents[1]
     (out / "definitions.md").write_text((root/"docs"/"metrics.md").read_text(encoding="utf-8"),encoding="utf-8")
-    (out / "report.html").write_text(make_report(metrics, as_of, demo, selected, quality),encoding="utf-8")
+    (out / "static_report.html").write_text(make_report(metrics, as_of, demo, selected, quality),encoding="utf-8")
+    (out / "report.html").write_text(make_dashboard(metrics, as_of, demo, selected, quality),encoding="utf-8")
     (out / "analysis.md").write_text("# 待AI解释与人工判断\n\n先核对quality.json；按framework.md解释事实、原因与假设。\n",encoding="utf-8")
     (out / "framework.md").write_text((root/"docs"/"framework.md").read_text(encoding="utf-8"),encoding="utf-8")
     for name in ("core.py",):
         (out/name).write_bytes((Path(__file__).parent/name).read_bytes())
     (out/"recompute.py").write_text('from datetime import date\nfrom core import load_facts, calculate\nimport hashlib\nimport json\nfrom pathlib import Path\nroot=Path(__file__).resolve().parent\nm=json.loads((root/"manifest.json").read_text(encoding="utf-8"))\nfor name,digest in m["files"].items():\n    assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest, "Hash mismatch: "+name\nresult,quality=calculate(load_facts(root/"financials.csv"), date.fromisoformat(m["as_of"]))\nexpected=json.loads((root/"metrics.json").read_text(encoding="utf-8"))\nassert result == expected, "Metrics mismatch"\nassert quality == json.loads((root/"quality.json").read_text(encoding="utf-8")), "Quality mismatch"\nprint("Recomputation passed:", len(result), "metrics; hashes and quality matched")\n',encoding="utf-8")
-    names = ["financials.csv","metrics.json","quality.json","sources.csv","definitions.md","report.html","analysis.md","framework.md","core.py","recompute.py"]
+    names = ["financials.csv","metrics.json","quality.json","sources.csv","definitions.md","report.html","static_report.html","analysis.md","framework.md","core.py","recompute.py"]
     hashes = {name:hashlib.sha256((out/name).read_bytes()).hexdigest() for name in names}
     manifest = {"schema_version":"0.2.0", "as_of":as_of.isoformat(), "generated_at":datetime.now(timezone.utc).isoformat(),
                 "data_kind":"synthetic_demo" if demo else "user_supplied_unverified",

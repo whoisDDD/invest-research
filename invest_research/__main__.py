@@ -25,7 +25,7 @@ def main():
     try:
         if args.command == "demo":
             root = Path(__file__).resolve().parents[1]
-            result = run(root/"examples"/"demo.csv", date(2026,11,5),args.out,demo=True)
+            result = run(root/"examples"/"dashboard-demo.csv", date(2026,11,5),args.out,demo=True)
         else:
             result = run(args.input,args.as_of,args.out)
         print(json.dumps(result,ensure_ascii=False,indent=2))
