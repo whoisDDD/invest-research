@@ -4,7 +4,7 @@
 
 目标是复现视频中的市场/指数/行业研究：数据→样本与指标→图表→有证据的观察→人工判断。现有公司财报看板仍保留，但它不等同于这个目标。
 
-**v0.4.0是可测试的研究基础版本，尚未通过“忠实复现原视频”的最终验收。** 已完成14页口径登记、研究输入契约、两种图表及证据交互、公开来源采集和真实样本验证。原视频的数据供应商、历史样本、营收算法和参考线公式仍有缺口；真实营收/市值八年趋势尚未取得，不能把合成演示当作完成证明。
+**v0.4.1是可测试的研究基础版本，尚未通过“忠实复现原视频”的最终验收。** 已完成14页口径登记、研究输入契约、两种图表及证据交互、公开来源采集和真实样本验证。原视频的数据供应商、历史样本、营收算法和参考线公式仍有缺口；真实营收/市值八年趋势尚未取得，不能把合成演示当作完成证明。
 
 原视频：[2026年三季度，上市公司财报，汇总数据分析](https://www.bilibili.com/zh-Hans/video/BV16Jx96JEpV/)，黄阳的学习分享。2026-11-06逐页核对；时间为观察点，不是精确切页时间。结构化记录在 `invest_research/ui/video-methods.json`，可直接从报告“视频与口径”页查看。
 
@@ -98,7 +98,7 @@ npm run test:research
 python runs/p0-demo/recompute.py
 ```
 
-两个Node命令是DOM/交互逻辑检查，不等于浏览器渲染。`tests/test_research_browser.cjs`另有可选真实Chromium冒烟：需自行准备Playwright和浏览器，可用CHROMIUM_PATH指定已安装Chromium；本环境尝试时被socket权限限制，未通过渲染验收。手机显示仍须本地实际体验。
+两个Node命令是DOM/交互逻辑检查，不等于浏览器渲染。`tests/test_research_browser.cjs`另有可选真实Chromium冒烟：需自行准备Playwright和浏览器，可用CHROMIUM_PATH指定已安装Chromium；云端尝试仍受socket权限限制；用户回传的v0.4.0本地Chromium测试已实际运行，发现参考线与重合点拦截鼠标的缺陷。v0.4.1已改为按日期统一命中并显示全部来源，真实浏览器命中及手机显示需要本地复测。
 
 研究包包含HTML、CSV、JSON、观察文字、方法、确定性计算源码、复算脚本和哈希清单。解压后运行 `python recompute.py`，核对CSV重算结果与保存JSON一致；该检查证明计算一致，不证明供应商数据已与每家公司原文核对。明确传 `--audit`时也包含逐股采集依赖。
 
@@ -121,3 +121,11 @@ python runs/p0-demo/recompute.py
 - [AKShare东方财富业绩报表接口实现](https://github.com/akfamily/akshare/blob/main/akshare/stock/finance/stock_yjbb_em.py)
 - [腾讯官方SkillHub说明](https://skillhub.cn/skills/tencent-adm/westock-data)
 - [同花顺iFinD官方入口](https://mcp.51ifind.com/)
+
+## 本地结果与0.4.1界面修复
+
+回传报告记录41项Python测试在两种Python版本通过、13项DOM测试通过、26项独立数据核验通过；真实浏览器27项断言中1项失败，定位为基期点的两层遮挡。这些结果支持基础数据链路，不能证明原视频完整复现。
+
+0.4.1中，同日指标共用一个互不重叠的日期点击区域，参考线不接收鼠标；弹窗保留当天全部指标的原始值和独立来源。单点显示快照、无值轴不绘制；有数据趋势的图优先，研究摘要默认折叠；手机取消570px最小图宽，按实际容器绘图。桌面导航取消粘顶，避免滚动命中被导航覆盖；手机保留底部导航。
+
+新旧版本使用同一回传CSV生成的research.json完全一致。本轮未改供应商接口、财务计算或缺口判定。针对性测试见[prompts/test-p0-clickfix.md](../prompts/test-p0-clickfix.md)，复测可重用原采集日的数据，无需重新联网取数。

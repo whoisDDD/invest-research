@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "invest-research"
-version = "0.4.0"
+version = "0.4.1"
 description = "Agent-neutral, source-backed investment research framework"
 requires-python = ">=3.10"
 license = {text = "MIT"}
