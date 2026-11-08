@@ -4,11 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "invest-research"
-version = "0.3.0"
+version = "0.4.0"
 description = "Agent-neutral, source-backed investment research framework"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = []
+
+[project.optional-dependencies]
+research-data = ["pandas>=2.0,<3", "xlrd>=2.0,<3", "pypdf>=5,<7"]
 
 [project.scripts]
 invest-research = "invest_research.__main__:main"
@@ -17,5 +20,5 @@ invest-research = "invest_research.__main__:main"
 include = ["invest_research*"]
 
 [tool.setuptools.package-data]
-invest_research = ["ui/*.html", "ui/*.css", "ui/*.js"]
+invest_research = ["ui/*.html", "ui/*.css", "ui/*.js", "ui/*.json", "ui/*.csv"]
 
