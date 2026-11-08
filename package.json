@@ -1,6 +1,11 @@
 {
   "name": "invest-research-ui-tests",
   "private": true,
-  "scripts": {"test:ui": "node --test tests/test_dashboard_ui.cjs tests/test_dashboard_dom.cjs"},
-  "devDependencies": {"jsdom": "26.1.0"}
+  "scripts": {
+    "test:ui": "node --test tests/test_dashboard_ui.cjs tests/test_dashboard_dom.cjs",
+    "test:research": "node --test tests/test_research_ui.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
 }

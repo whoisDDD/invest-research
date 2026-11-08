@@ -1,5 +1,9 @@
 # 通用Agent工作规则
 
+## 本轮P0研究
+
+复现黄阳视频请先读 docs/huangyang-p0.md 和 prompts/test-p0.md。当前复现状态为partial，不能把公司看板或合成研究图当作忠实复现。历史样本与固定成分不得混称；视频参考线不得默认套用其他来源的PE。
+
 ## 目标
 
 帮助使用者降低研究成本：数据可追溯、计算可重复、解释有依据、判断可复盘。中文输出。先读 README.md、docs/framework.md、docs/metrics.md 和本次实际需要的数据源说明。

@@ -1,0 +1,25 @@
+{
+  "title": "2026年三季度，上市公司财报，汇总数据分析",
+  "author": "黄阳的学习分享",
+  "url": "https://www.bilibili.com/zh-Hans/video/BV16Jx96JEpV/",
+  "reviewed_at": "2026-11-06",
+  "status": "图表逐页核对；原始数据、软件名称与公式未由作者公开确认",
+  "pages": [
+    {"page":1,"object":"整体市场（除银行）","chart":"PE概览","observed_at":"00:16","start_tick":"2017-11-03","references":[22.38,25.95,29.52]},
+    {"page":2,"object":"A股整体","chart":"总营收柱形 + 总市值折线，双轴","observed_at":"01:08","start_tick":"2021-11-05","last_tick":"2026-07-24","note":"轴标注万亿；不能将总营收称为净利润"},
+    {"page":3,"object":"沪深300","chart":"总营收 + 总市值","observed_at":"01:52","start_tick":"2018-11-09","last_tick":"2026-10-23"},
+    {"page":4,"object":"沪深300","chart":"PE与均值/低估线/高估线","observed_at":"03:32","window_label":"近八年数据","references":[11.17,12.52,13.87]},
+    {"page":5,"object":"科创50","chart":"总营收 + 总市值","observed_at":"04:24","start_tick":"2019-07-26","last_tick":"2026-09-18"},
+    {"page":6,"object":"科创50","chart":"PE与三条参考线","observed_at":"05:02","window_label":"近八年数据","references":[30.92,74.34,117.76],"note":"横轴起于2019年，标签不代表实际满八年"},
+    {"page":7,"object":"中证1000","chart":"总营收 + 总市值","observed_at":"05:56","start_tick":"2018-11-09","last_tick":"2026-10-23"},
+    {"page":8,"object":"中证1000","chart":"PE与三条参考线","observed_at":"06:36","window_label":"近八年数据","references":[27.62,34.58,41.54]},
+    {"page":9,"object":"半导体行业","chart":"总营收 + 总市值","observed_at":"07:45","start_tick":"2018-11-09","last_tick":"2026-10-23","note":"行业分类标准与成分清单待确认；没有独立PE页"},
+    {"page":10,"object":"上市银行","chart":"总营收 + 总市值","observed_at":"08:17","start_tick":"2018-11-09","last_tick":"2026-10-23"},
+    {"page":11,"object":"上市银行","chart":"PE与三条参考线","observed_at":"08:38","window_label":"近八年数据","references":[5.01,5.87,6.73]},
+    {"page":12,"object":"中证红利","chart":"总营收 + 总市值","observed_at":"09:36","start_tick":"2018-11-09","last_tick":"2026-10-23"},
+    {"page":13,"object":"中证红利","chart":"PE与三条参考线","observed_at":"10:26","window_label":"近八年数据","references":[5.84,6.93,8.02]},
+    {"page":14,"object":"整体市场（除银行）","chart":"PE总结，重复第1页","observed_at":"11:04","start_tick":"2017-11-03","references":[22.38,25.95,29.52]}
+  ],
+  "unconfirmed": ["营收是TTM、年度还是其他平滑方式", "各历史日期的样本构成与调整处理", "PE是整体法、加权法还是其他方法，以及亏损股处理", "PE采样频率与有效数据截止日", "高低估线公式及均值计算方式", "图表软件与数据供应商", "第3至13页金额轴的单位"],
+  "implementation": "本项目独立样板使用明确的营收TTM、总市值和来源报告滚动PE。视频参考线默认不套到其他来源PE上，图形对应不代表数值或研究结论已复现。"
+}
